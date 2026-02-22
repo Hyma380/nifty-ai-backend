@@ -1,5 +1,7 @@
 from fastapi import FastAPI
-
+from database import engine
+from models import Trade
+from database import Base
 app = FastAPI()
 
 @app.get("/")
@@ -40,3 +42,6 @@ def create_trade(symbol: str, side: str, quantity: float, price: float, db: Sess
     db.commit()
     db.refresh(trade)
     return trade
+@app.on_event("startup")
+def startup():
+    Base.metadata.create_all(bind=engine)
